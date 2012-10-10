@@ -10,7 +10,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -38,13 +40,22 @@ public class MetricsGraph extends Graph {
     }
 
     Collections.reverse(actions);
+    Set<String> statusSet = new HashSet<String>();
 
     DefaultCategoryDataset ds = new DefaultCategoryDataset();
     for (MetricsAction action : actions) {
+      String buildNum = "#" + action.getBuild().getNumber();
+      boolean addedValue = false;
       List<MetricsResult> metricsList = action.getMetricsList();
       for (MetricsResult result : metricsList) {
-        ds.addValue(result.getCount(), result.getStatus(), "#"
-            + action.getBuild().getNumber());
+        statusSet.add(result.getStatus());
+        ds.addValue(result.getCount(), result.getStatus(), buildNum);
+        addedValue = true;
+      }
+      if (!addedValue) {
+        for (String status : statusSet) {
+          ds.addValue(0, status, buildNum);
+        }
       }
     }
     return ds;
@@ -67,7 +78,6 @@ public class MetricsGraph extends Graph {
     CategoryPlot plot = (CategoryPlot) chart.getPlot();
     plot.setBackgroundPaint(Color.WHITE);
     plot.setOutlinePaint(null);
-    plot.setForegroundAlpha(0.8f);
     plot.setRangeGridlinesVisible(true);
     plot.setRangeGridlinePaint(Color.black);
 
