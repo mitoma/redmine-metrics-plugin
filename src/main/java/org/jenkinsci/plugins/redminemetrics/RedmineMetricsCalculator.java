@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.taskadapter.redmineapi.RedmineException;
 import com.taskadapter.redmineapi.RedmineManager;
 import com.taskadapter.redmineapi.bean.Issue;
@@ -18,13 +20,18 @@ public class RedmineMetricsCalculator {
   private String apiKey;
   private String projectName;
   private String versions;
+  private String ignoreTicketTracker;
+  private String ignoreTicketStatus;
 
   public RedmineMetricsCalculator(String url, String apiKey,
-      String projectName, String versions) {
+      String projectName, String versions, String ignoreTicketTracker,
+      String ignoreTicketStatus) {
     this.url = url;
     this.apiKey = apiKey;
     this.projectName = projectName;
     this.versions = versions;
+    this.ignoreTicketTracker = ignoreTicketTracker;
+    this.ignoreTicketStatus = ignoreTicketStatus;
   }
 
   public List<MetricsResult> calc() throws MetricsException {
@@ -43,6 +50,13 @@ public class RedmineMetricsCalculator {
         params.put("status_id", "*");
 
         for (Issue issue : manager.getIssues(params)) {
+          if (!isTargetTracker(issue)) {
+            continue;
+          }
+          if (!isTargetStatus(issue)) {
+            continue;
+          }
+
           String status = issue.getStatusName();
           if (!tmpCalcMap.containsKey(status)) {
             tmpCalcMap.put(status, 0);
@@ -58,6 +72,22 @@ public class RedmineMetricsCalculator {
       throw new MetricsException(e);
     }
     return result;
+  }
+
+  private boolean isTargetTracker(Issue issue) {
+    if (ignoreTicketTracker.isEmpty()) {
+      return true;
+    }
+    return !ArrayUtils.contains(ignoreTicketTracker.split(","), issue
+        .getTracker().getName());
+  }
+
+  private boolean isTargetStatus(Issue issue) {
+    if (ignoreTicketStatus.isEmpty()) {
+      return true;
+    }
+    return !ArrayUtils.contains(ignoreTicketStatus.split(","),
+        issue.getStatusName());
   }
 
   private Project getProject(RedmineManager manager) throws RedmineException {

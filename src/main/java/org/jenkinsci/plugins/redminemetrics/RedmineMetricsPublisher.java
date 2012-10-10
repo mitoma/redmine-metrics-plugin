@@ -26,14 +26,18 @@ public class RedmineMetricsPublisher extends Publisher {
   private String projectName;
   private String apiKey;
   private String versions;
+  private String ignoreTicketTracker;
+  private String ignoreTicketStatus;
 
   @DataBoundConstructor
   public RedmineMetricsPublisher(String url, String projectName, String apiKey,
-      String versions) {
+      String versions, String ignoreTicketTracker, String ignoreTicketStatus) {
     this.url = url;
     this.projectName = projectName;
     this.apiKey = apiKey;
     this.versions = versions;
+    this.ignoreTicketTracker = ignoreTicketTracker;
+    this.ignoreTicketStatus = ignoreTicketStatus;
   }
 
   @Override
@@ -42,7 +46,7 @@ public class RedmineMetricsPublisher extends Publisher {
     PrintStream logger = listener.getLogger();
 
     RedmineMetricsCalculator calculator = new RedmineMetricsCalculator(url,
-        apiKey, projectName, versions);
+        apiKey, projectName, versions, ignoreTicketTracker, ignoreTicketStatus);
     try {
       List<MetricsResult> metricsList = calculator.calc();
       MetricsAction metricsAction = new MetricsAction(build, metricsList);
@@ -73,6 +77,14 @@ public class RedmineMetricsPublisher extends Publisher {
 
   public String getVersions() {
     return versions;
+  }
+
+  public String getIgnoreTicketTracker() {
+    return ignoreTicketTracker;
+  }
+
+  public String getIgnoreTicketStatus() {
+    return ignoreTicketStatus;
   }
 
   @Override

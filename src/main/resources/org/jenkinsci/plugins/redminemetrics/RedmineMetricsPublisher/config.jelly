@@ -11,4 +11,12 @@
   <f:entry title="${%Target Version}" field="versions">
     <f:textbox />
   </f:entry>
+  <f:advanced>
+    <f:entry title="${%Ignore Ticket Tracker}" field="ignoreTicketTracker">
+      <f:textbox />
+    </f:entry>
+    <f:entry title="${%Ignore Ticket Status}" field="ignoreTicketStatus">
+      <f:textbox />
+    </f:entry>
+  </f:advanced>
 </j:jelly>

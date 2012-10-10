@@ -57,7 +57,7 @@ public class RedmineMetricsCalculatorTest {
     };
 
     RedmineMetricsCalculator rmc = new RedmineMetricsCalculator(
-        "http://example.com/", "APIKEY", "Example", "v1");
+        "http://example.com/", "APIKEY", "Example", "v1", "", "");
     assertEquals(1, rmc.calc().size());
   }
 }
