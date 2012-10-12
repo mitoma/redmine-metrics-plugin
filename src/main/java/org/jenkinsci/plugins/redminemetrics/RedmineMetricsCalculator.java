@@ -75,7 +75,7 @@ public class RedmineMetricsCalculator {
   }
 
   private boolean isTargetTracker(Issue issue) {
-    if (ignoreTicketTracker.isEmpty()) {
+    if (ignoreTicketTracker == null || ignoreTicketTracker.isEmpty()) {
       return true;
     }
     return !ArrayUtils.contains(ignoreTicketTracker.split(","), issue
@@ -83,7 +83,7 @@ public class RedmineMetricsCalculator {
   }
 
   private boolean isTargetStatus(Issue issue) {
-    if (ignoreTicketStatus.isEmpty()) {
+    if (ignoreTicketStatus == null || ignoreTicketStatus.isEmpty()) {
       return true;
     }
     return !ArrayUtils.contains(ignoreTicketStatus.split(","),
